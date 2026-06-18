@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>CHASKY GIROS</title>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background: #c0c9d4;
+min-height: 100vh;
+padding:10px;
+}
+
+.container{
+max-width:480px;
+margin:auto;
+width:100%;
+}
+
+.panel{
+background: rgba(255, 255, 255, 0.85);
+backdrop-filter: blur(10px);
+padding:12px;
+border-radius:16px;
+margin-bottom:15px;
+border: 1px solid rgba(255,255,255,0.3);
+box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* FILA 1 - Operación y Botón Config */
+.fila1{
+display:grid;
+grid-template-columns: 1fr auto;
+gap:8px;
+align-items:center;
+margin-bottom:8px;
+}
+
+.fila1 .field{
+margin-bottom:0;
+}
+
+.fila1 .field label{
+display:block;
+font-size:11px;
+font-weight:700;
+margin-bottom:2px;
+color:#374151;
+}
+
+.fila1 .field input,
+.fila1 .field select{
+width:100%;
+height:36px;
+background:white;
+border: 2px solid #d1d5db;
+border-radius:8px;
+padding:0 10px;
+color:#111827;
+font-size:13px;
+transition: border-color 0.3s;
+}
+
+.fila1 .field input:focus,
+.fila1 .field select:focus{
+outline: none;
+border-color: #f59e0b;
+box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* Contenedor de Operación con referencia */
+.operacion-wrapper{
+display:flex;
+gap:6px;
+align-items:center;
+}
+
+.operacion-wrapper select{
+flex:1;
+}
+
+.ref-tc{
+font-size:13px;
+font-weight:800;
+color:#f59e0b;
+background:#1f2937;
+padding:2px 8px;
+border-radius:6px;
+white-space:nowrap;
+min-width:60px;
+text-align:center;
+height:36px;
+display:flex;
+align-items:center;
+justify-content:center;
+border: 2px solid #f59e0b;
+}
+
+/* Botón Configuración */
+#btnConfig{
+background:#374151;
+color:white;
+border:none;
+border-radius:8px;
+width:38px;
+height:36px;
+cursor:pointer;
+font-size:16px;
+transition: all 0.3s;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+#btnConfig:hover{
+background:#f59e0b;
+transform:rotate(90deg);
+}
+
+/* Panel de Configuración desplegable */
+.config-panel{
+max-height:0;
+overflow:hidden;
+transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+opacity:0;
+padding:0 5px;
+}
+
+.config-panel.abierto{
+max-height:500px;
+opacity:1;
+padding:8px 5px 5px 5px;
+}
+
+.config-panel .field{
+margin-bottom:6px;
+}
+
+.config-panel .field label{
+display:block;
+font-size:11px;
+font-weight:700;
+margin-bottom:2px;
+color:#374151;
+}
+
+.config-panel .field input{
+width:100%;
+height:36px;
+background:white;
+border: 2px solid #d1d5db;
+border-radius:8px;
+padding:0 10px;
+color:#111827;
+font-size:13px;
+transition: border-color 0.3s;
+}
+
+.config-panel .field input:focus{
+outline: none;
+border-color: #f59e0b;
+box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.config-panel .grid-config{
+display:grid;
+grid-template-columns: 1fr 1fr;
+gap:8px;
+}
+
+/* FILA 2 - Deposita y Recibe */
+.fila2{
+display:grid;
+grid-template-columns: 1fr 1fr;
+gap:8px;
+}
+
+.fila2 .field{
+margin-bottom:0;
+}
+
+.fila2 .field label{
+display:block;
+font-size:11px;
+font-weight:700;
+margin-bottom:2px;
+color:#374151;
+}
+
+.fila2 .field input{
+width:100%;
+height:42px;
+background:white;
+border: 2px solid #d1d5db;
+border-radius:8px;
+padding:0 12px;
+color:#111827;
+font-size:16px;
+font-weight:700;
+transition: border-color 0.3s;
+}
+
+.fila2 .field input:focus{
+outline: none;
+border-color: #f59e0b;
+box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* Etiquetas de moneda en los campos */
+.moneda-label{
+font-size:11px;
+font-weight:700;
+color:#6b7280;
+margin-left:3px;
+}
+
+.buttons{
+display:flex;
+gap:8px;
+margin-top:10px;
+}
+
+.buttons button{
+flex:1;
+height:40px;
+border:none;
+border-radius:10px;
+font-weight:700;
+font-size:13px;
+cursor:pointer;
+transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.buttons button:active{
+transform: scale(0.96);
+}
+
+#btnLimpiar{
+background:#9ca3af;
+color:white;
+}
+
+#btnGuardar{
+background:#f59e0b;
+color:black;
+}
+
+/* ==================== */
+/* TARJETA - CHASKYS */
+/* ==================== */
+
+.card{
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 8px 30px rgba(0,0,0,.15);
+width:100%;
+max-width:480px;
+margin:0 auto;
+}
+
+.header{
+background: linear-gradient(135deg, #0a2a5a, #062040);
+border-bottom: 3px solid #3a7adf;
+padding:14px 16px 10px;
+text-align:center;
+position:relative;
+overflow:hidden;
+}
+
+#tituloEmpresa{
+color: #cce0ff;
+font-size: 17px;
+letter-spacing: 1px;
+font-weight: 900;
+position:relative;
+z-index:2;
+}
+
+.fila-fecha-tc{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:12px;
+margin-top:4px;
+position:relative;
+z-index:2;
+flex-wrap:wrap;
+}
+
+.fecha-text{
+color: #aaccff;
+font-size:15px;
+font-weight:800;
+}
+
+/* BARRA DE OPERACIÓN CHASKYS */
+.currency-chaskys{
+background: linear-gradient(135deg, #1a3a6a, #0a2a4a);
+color: white;
+font-weight: 800;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 12px;
+font-size:15px;
+letter-spacing:0.5px;
+}
+
+.currency-chaskys .operacion-text{
+color:white;
+}
+
+.currency-chaskys .tc-chaskys-bar{
+color:#ffffff !important;
+font-size:14px;
+font-weight:700;
+background:rgba(255,255,255,0.15);
+padding:2px 12px;
+border-radius:4px;
+}
+
+/* CONTENIDO CHASKYS */
+.content-horizontal-chaskys{
+padding:14px 16px 8px;
+background:white;
+display:grid;
+grid-template-columns: 1fr auto 1fr;
+align-items:center;
+gap:6px;
+text-align:center;
+}
+
+.content-horizontal-chaskys .col{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.content-horizontal-chaskys .label{
+font-size:12px;
+text-transform:uppercase;
+color:#6b7280;
+font-weight:700;
+letter-spacing:1px;
+margin-bottom:3px;
+}
+
+.content-horizontal-chaskys .valor{
+display:flex;
+align-items:center;
+gap:4px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.content-horizontal-chaskys .send{
+font-size:28px;
+font-weight:900;
+color:#111111;
+}
+
+.content-horizontal-chaskys .moneda-send-h{
+font-size:18px;
+font-weight:700;
+color:#6b7280;
+}
+
+.content-horizontal-chaskys .arrow{
+font-size:28px;
+font-weight:700;
+color:#3a7adf;
+}
+
+.content-horizontal-chaskys .receive{
+font-size:28px;
+font-weight:900;
+color:#1a3a6a;
+}
+
+.content-horizontal-chaskys .moneda-receive-h{
+font-size:18px;
+font-weight:700;
+color:#6b7280;
+}
+
+.content-horizontal-chaskys .comision-center{
+grid-column: 1 / -1;
+text-align:center;
+font-size:12px;
+font-weight:700;
+color:#000000;
+background:#d1d5db;
+padding:4px 14px;
+border-radius:20px;
+border:1px solid #9ca3af;
+margin-top:-2px;
+letter-spacing:0.5px;
+}
+
+/* FOOTER CHASKYS */
+.footer-chaskys{
+padding:8px 16px 10px;
+display:flex;
+justify-content:center;
+border-top:2px solid #1a3a6a;
+color:#6b7280;
+font-weight:600;
+font-size:9px;
+background:white;
+text-align:center;
+letter-spacing:0.3px;
+text-transform:uppercase;
+}
+
+.footer-chaskys span{
+color:#555555;
+}
+
+/* ==================== */
+/* RESPONSIVE EXTRA */
+/* ==================== */
+
+@media (max-width: 400px){
+    .fila1{
+        grid-template-columns: 1fr auto;
+        gap:6px;
+    }
+    .fila1 .field select,
+    .fila1 .field input{
+        font-size:12px;
+        height:32px;
+    }
+    .ref-tc{
+        font-size:11px;
+        min-width:50px;
+        height:32px;
+    }
+    #btnConfig{
+        width:32px;
+        height:32px;
+        font-size:14px;
+    }
+    .fila2 .field input{
+        height:38px;
+        font-size:14px;
+    }
+    .content-horizontal-chaskys .send,
+    .content-horizontal-chaskys .receive{
+        font-size:22px;
+    }
+    .content-horizontal-chaskys .moneda-send-h,
+    .content-horizontal-chaskys .moneda-receive-h{
+        font-size:14px;
+    }
+    #tituloEmpresa{
+        font-size:15px !important;
+    }
+    .fecha-text{
+        font-size:13px;
+    }
+    .currency-chaskys{
+        font-size:13px;
+        padding:8px 6px;
+    }
+    .currency-chaskys .tc-chaskys-bar{
+        font-size:12px;
+        padding:2px 8px;
+    }
+    .footer-chaskys{
+        font-size:8px !important;
+        padding:6px 12px 8px;
+    }
+    .content-horizontal-chaskys .comision-center{
+        font-size:10px;
+        padding:3px 10px;
+    }
+}
+
+@media (max-width: 360px){
+    .fila1{
+        grid-template-columns: 1fr;
+        gap:6px;
+    }
+    .fila1 .field{
+        width:100%;
+    }
+    .operacion-wrapper{
+        width:100%;
+    }
+    .fila2{
+        grid-template-columns: 1fr;
+        gap:6px;
+    }
+    .config-panel .grid-config{
+        grid-template-columns: 1fr;
+    }
+    .content-horizontal-chaskys{
+        grid-template-columns: 1fr;
+        gap:6px;
+    }
+    .content-horizontal-chaskys .arrow{
+        transform: rotate(90deg);
+    }
+    .buttons{
+        flex-direction:column;
+    }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="panel">
+
+<!-- FILA 1: Operación + Botón Config -->
+<div class="fila1">
+    <div class="field">
+        <label>OPERACIÓN</label>
+        <div class="operacion-wrapper">
+            <select id="operacion">
+                <option value="bs_soles">BS → SOLES</option>
+                <option value="soles_bs">SOLES → BS</option>
+            </select>
+            <span id="refTc" class="ref-tc">T/C 0.00</span>
+        </div>
+    </div>
+    <button id="btnConfig">⚙️</button>
+</div>
+
+<!-- PANEL DE CONFIGURACIÓN DESPLEGABLE -->
+<div id="configPanel" class="config-panel">
+    <div class="grid-config">
+        <div class="field">
+            <label>TC BS → SOLES</label>
+            <input type="number" id="tcBsSoles" value="2.92" step="0.01">
+        </div>
+        <div class="field">
+            <label>TC SOLES → BS</label>
+            <input type="number" id="tcSolesBs" value="2.76" step="0.01">
+        </div>
+        <div class="field" style="grid-column: span 2;">
+            <label>COMISIÓN CHASKYS (%)</label>
+            <input type="number" id="comision" value="3" step="0.1" min="0" max="100">
+        </div>
+    </div>
+</div>
+
+<!-- FILA 2: Deposita + Recibe -->
+<div class="fila2">
+    <div class="field">
+        <label id="labelDeposita">DEPOSITA <span class="moneda-label" id="monedaDeposita">(BS)</span></label>
+        <input type="number" id="depositar">
+    </div>
+    <div class="field">
+        <label id="labelRecibe">RECIBE <span class="moneda-label" id="monedaRecibe">(SOLES)</span></label>
+        <input type="number" id="recibe">
+    </div>
+</div>
+
+<div class="buttons">
+    <button id="btnLimpiar">LIMPIAR</button>
+    <button id="btnGuardar">📸 GUARDAR</button>
+</div>
+
+</div>
+
+<!-- TARJETA CHASKYS -->
+<div id="tarjeta" class="card">
+
+<div class="header">
+
+<div id="tituloEmpresa">CHASKY GIROS</div>
+
+<div class="fila-fecha-tc">
+    <span id="fechaText" class="fecha-text">17 JUN 2026</span>
+</div>
+
+</div>
+
+<!-- BARRA DE OPERACIÓN CHASKYS -->
+<div id="barraOperacionChaskys" class="currency-chaskys">
+    <span class="operacion-text" id="operacionTexto">SOLES → BOLIVIANOS</span>
+    <span class="tc-chaskys-bar" id="tcChaskysBar">T/C 2.76</span>
+</div>
+
+<!-- CONTENIDO CHASKYS -->
+<div id="contenidoChaskys" class="content-horizontal-chaskys">
+
+<div class="col">
+    <div class="label" id="labelDepositaC">Deposita</div>
+    <div class="valor">
+        <span id="enviaVistaC" class="send">0.00</span>
+        <span id="monedaSendC" class="moneda-send-h">BS</span>
+    </div>
+</div>
+
+<div class="arrow" id="flechaChaskys">→</div>
+
+<div class="col">
+    <div class="label" id="labelRecibeC">Recibe</div>
+    <div class="valor">
+        <span id="recibeVistaC" class="receive">0.00</span>
+        <span id="monedaRecibeC" class="moneda-receive-h">SOLES</span>
+    </div>
+</div>
+
+<div class="comision-center" id="comisionCenterChaskys">COMISIÓN 0.00 BS (3%)</div>
+
+</div>
+
+<!-- FOOTER CHASKYS -->
+<div class="footer-chaskys">
+    <span>ESTA COTIZACION TIENE VIGENCIA DE 15 MIN.</span>
+</div>
+
+</div>
+
+</div>
+<script>
+
+const operacion = document.getElementById("operacion");
+
+const tcBsSoles = document.getElementById("tcBsSoles");
+const tcSolesBs = document.getElementById("tcSolesBs");
+const comision = document.getElementById("comision");
+
+const depositar = document.getElementById("depositar");
+const recibe = document.getElementById("recibe");
+
+const tarjeta = document.getElementById("tarjeta");
+
+const operacionTexto = document.getElementById("operacionTexto");
+const tcChaskysBar = document.getElementById("tcChaskysBar");
+
+const enviaVistaC = document.getElementById("enviaVistaC");
+const recibeVistaC = document.getElementById("recibeVistaC");
+const refTc = document.getElementById("refTc");
+const fechaText = document.getElementById("fechaText");
+const comisionCenterChaskys = document.getElementById("comisionCenterChaskys");
+
+// Monedas CHASKYS
+const monedaSendC = document.getElementById("monedaSendC");
+const monedaRecibeC = document.getElementById("monedaRecibeC");
+
+const monedaDeposita = document.getElementById("monedaDeposita");
+const monedaRecibe = document.getElementById("monedaRecibe");
+
+const btnConfig = document.getElementById("btnConfig");
+const configPanel = document.getElementById("configPanel");
+
+let configAbierto = false;
+let ultimoCampo = "depositar";
+
+function formato(n){
+return Number(n).toFixed(2);
+}
+
+// Actualizar etiquetas de moneda
+function actualizarMonedas(){
+    if(operacion.value === "bs_soles"){
+        // BS → SOLES
+        monedaDeposita.textContent = "(BS)";
+        monedaRecibe.textContent = "(SOLES)";
+        monedaSendC.textContent = "BS";
+        monedaRecibeC.textContent = "SOLES";
+    } else {
+        // SOLES → BS
+        monedaDeposita.textContent = "(SOLES)";
+        monedaRecibe.textContent = "(BS)";
+        monedaSendC.textContent = "SOLES";
+        monedaRecibeC.textContent = "BS";
+    }
+}
+
+// Obtener el T/C (Chaskys usa TC directo sin ajustes)
+function getTcMostrado(){
+    if(operacion.value === "bs_soles"){
+        return parseFloat(tcBsSoles.value||0);
+    } else {
+        return parseFloat(tcSolesBs.value||0);
+    }
+}
+
+// Obtener la comisión
+function getComision(){
+    return parseFloat(comision.value||0) / 100;
+}
+
+// Obtener el valor de la comisión en bolivianos
+function getValorComisionBs(){
+    let dep = parseFloat(depositar.value || 0);
+    let tcMostrado = getTcMostrado();
+    let comisionVal = getComision();
+    
+    if(operacion.value === "bs_soles"){
+        let recibeCalc = dep / (tcMostrado * (1 + comisionVal));
+        return recibeCalc * comisionVal * tcMostrado;
+    } else {
+        return dep * tcMostrado * comisionVal;
+    }
+}
+
+// Toggle del panel de configuración
+btnConfig.addEventListener("click", function(){
+    configAbierto = !configAbierto;
+    if(configAbierto){
+        configPanel.classList.add("abierto");
+        btnConfig.style.background = "#f59e0b";
+        btnConfig.style.transform = "rotate(180deg)";
+    }else{
+        configPanel.classList.remove("abierto");
+        btnConfig.style.background = "#374151";
+        btnConfig.style.transform = "rotate(0deg)";
+    }
+});
+
+function actualizarFecha(){
+
+const fecha = new Date();
+
+const meses = [
+"ENE","FEB","MAR","ABR",
+"MAY","JUN","JUL","AGO",
+"SEP","OCT","NOV","DIC"
+];
+
+const fechaStr = String(fecha.getDate()).padStart(2, '0') + " " +
+meses[fecha.getMonth()] + " " +
+fecha.getFullYear();
+
+if(fechaText) fechaText.textContent = fechaStr;
+
+}
+
+function calcular(){
+
+let dep = parseFloat(depositar.value || 0);
+let rec = parseFloat(recibe.value || 0);
+
+let tcMostrado = getTcMostrado();
+let comisionVal = getComision();
+let comisionPorcentaje = parseFloat(comision.value||0);
+
+if(operacion.value==="bs_soles"){
+
+operacionTexto.textContent = "BOLIVIANOS → SOLES";
+
+if(ultimoCampo==="depositar"){
+    rec = dep / (tcMostrado * (1 + comisionVal));
+    recibe.value = rec ? formato(rec) : "";
+}else{
+    dep = rec * tcMostrado * (1 + comisionVal);
+    depositar.value = dep ? formato(dep) : "";
+}
+
+}else{
+
+operacionTexto.textContent = "SOLES → BOLIVIANOS";
+
+if(ultimoCampo==="depositar"){
+    rec = dep * tcMostrado * (1 - comisionVal);
+    recibe.value = rec ? formato(rec) : "";
+}else{
+    dep = rec / (tcMostrado * (1 - comisionVal));
+    depositar.value = dep ? formato(dep) : "";
+}
+
+}
+
+// Actualizar vista
+enviaVistaC.innerHTML = depositar.value || "0.00";
+recibeVistaC.innerHTML = recibe.value || "0.00";
+
+// Actualizar TC en la barra
+if(tcChaskysBar) tcChaskysBar.textContent = "T/C " + formato(tcMostrado);
+
+// Calcular valor de comisión en BS
+let comisionBs = 0;
+if(dep > 0){
+    comisionBs = getValorComisionBs();
+}
+
+// Actualizar comisión
+if(comisionPorcentaje > 0){
+    comisionCenterChaskys.textContent = "COMISIÓN " + formato(comisionBs) + " BS (" + comisionPorcentaje + "%)";
+    comisionCenterChaskys.style.display = "block";
+} else {
+    comisionCenterChaskys.style.display = "none";
+}
+
+// Actualizar T/C en el panel
+refTc.innerHTML = "T/C " + formato(tcMostrado);
+
+actualizarMonedas();
+
+}
+
+depositar.addEventListener("input",()=>{
+ultimoCampo="depositar";
+calcular();
+});
+
+recibe.addEventListener("input",()=>{
+ultimoCampo="recibe";
+calcular();
+});
+
+[operacion, tcBsSoles, tcSolesBs, comision].forEach(item=>{
+item.addEventListener("input", calcular);
+item.addEventListener("change", calcular);
+});
+
+operacion.addEventListener("change", function(){
+    actualizarMonedas();
+});
+
+document.getElementById("btnLimpiar").addEventListener("click",()=>{
+depositar.value="";
+recibe.value="";
+enviaVistaC.innerHTML="0.00";
+recibeVistaC.innerHTML="0.00";
+});
+
+document.getElementById("btnGuardar").addEventListener("click",()=>{
+html2canvas(document.getElementById("tarjeta"),{
+scale:3,
+backgroundColor:null,
+useCORS: true,
+logging: false,
+width: document.getElementById("tarjeta").offsetWidth,
+height: document.getElementById("tarjeta").offsetHeight
+}).then(canvas=>{
+const link = document.createElement("a");
+link.download = "cotizacion_chaskys.png";
+link.href = canvas.toDataURL();
+link.click();
+});
+});
+
+function guardarDatos(){
+localStorage.setItem("tcBsSoles", tcBsSoles.value);
+localStorage.setItem("tcSolesBs", tcSolesBs.value);
+localStorage.setItem("comision", comision.value);
+localStorage.setItem("operacion", operacion.value);
+}
+
+[tcBsSoles, tcSolesBs, comision, operacion].forEach(item=>{
+item.addEventListener("input", guardarDatos);
+item.addEventListener("change", guardarDatos);
+});
+
+// Guardar TC automáticamente
+function guardarTcAutomatically(){
+localStorage.setItem("tcBsSoles", tcBsSoles.value);
+localStorage.setItem("tcSolesBs", tcSolesBs.value);
+localStorage.setItem("comision", comision.value);
+}
+
+tcBsSoles.addEventListener("input", guardarTcAutomatically);
+tcSolesBs.addEventListener("input", guardarTcAutomatically);
+comision.addEventListener("input", guardarTcAutomatically);
+
+window.onload=()=>{
+tcBsSoles.value = localStorage.getItem("tcBsSoles") || "2.92";
+tcSolesBs.value = localStorage.getItem("tcSolesBs") || "2.76";
+comision.value = localStorage.getItem("comision") || "3";
+operacion.value = localStorage.getItem("operacion") || "soles_bs";
+
+actualizarFecha();
+actualizarMonedas();
+calcular();
+};
+
+</script>
+
+</body>
+</html>
